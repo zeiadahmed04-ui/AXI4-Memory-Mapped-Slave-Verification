@@ -20,13 +20,9 @@ module axi4_memory_fixed #(
     integer j;
     
     // Memory write
-    always @(posedge clk or negedge rst_n) begin // FIX: Asynchronous Reset
+    always @(posedge clk) begin 
         if (!rst_n) begin // FIX: Was Active High instead of Active Low
             mem_rdata <= 0;
-            // Initialize memory
-            for (j = 0; j < DEPTH; j = j + 1)
-                memory[j] = 0;
-
         end else if (mem_en) begin
             if (mem_we)
                 memory[mem_addr] <= mem_wdata;
@@ -35,4 +31,11 @@ module axi4_memory_fixed #(
         end
     end
     
+
+    // Initialize memory
+    initial begin
+        for (j = 0; j < DEPTH; j = j + 1)
+            memory[j] = 0;
+    end
+
 endmodule

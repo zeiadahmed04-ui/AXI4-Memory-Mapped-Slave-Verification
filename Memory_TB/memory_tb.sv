@@ -138,8 +138,9 @@ module memory_tb;
 
   task scoreboard;
 
-    $display("\n==============================\n");
-
+    $display("\n==============================");
+    $display("========= Scoreboard =========");
+    $display("==============================\n");
     $display("===== Pass Count: %0d =====", pass);
     $display("===== Fail Count: %0d =====", fail);
 
