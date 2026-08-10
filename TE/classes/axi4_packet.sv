@@ -1,28 +1,75 @@
-class AXI4_Pack_Gen;
+package axi4_packet_pkg;
 
-    // the inputs of AXI4 desgin
-    rand logic [15:0] AWADDR; // address of writting
-    rand logic [7:0] AWLEN; // Burst length
-    rand logic [2:0] AWSIZE; // size of each transfer in the burst
-    logic AWVALID; // Write address Valid
-    rand logic [31:0] WDATA; // write data
-    logic WLAST, WVALID;
-    logic BREADY; // the master can accept the response information
-    rand logic [15:0] ARADDR; // address of reading
-    rand logic [7:0] ARLEN;
-    rand logic [2:0] ARSIZE;
-    logic ARVALID;
-    logic RREADY;
-    // the outputs of the AXI4 desgin
-    logic AWREADY; // Write address ready
-    logic WREADY;
-    logic [1:0] BRESP; // status of the write transaction
-    logic BVALID;  // valid write response is available
-    logic ARREADY;
-    logic [31:0] RDATA;
-    logic [1:0] RRESP;
-    logic RLAST;
-    logic RVALID;
+class axi4_packet;
+
+    parameter DATA_WIDTH = 32;
+    parameter ADDR_WIDTH = 16;
+    parameter MEMORY_DEPTH = 1024;
+
+    // =============================
+    // === Inputs NOT Randomized ===
+    // =============================
+
+    // Write address channel
+    logic AWVALID;  // Indicates that valid write address and control information is available:
+
+    // Write data channel
+    logic WLAST;  // Write last. Indicates the last transfer in a write burst
+    logic WVALID;  // Indicates that valid write data and strobes are available
+
+    // Write response channel
+    logic BREADY;  // Indicates that the master can accept the response information
+
+    // Read data channel
+    logic RREADY;  // Read ready. This signal indicates that the master can accept the read data
+
+    // Read address channel
+    logic ARVALID;  // Indicates that the read address and control information is valid
+
+
+    // =============================
+    // ==== Inputs to Randomize ====
+    // =============================
+
+    rand logic ARESETn;  // Global reset signal
+
+    // Write address channel
+    rand logic [ADDR_WIDTH-1:0] AWADDR;  // The Address of first transfer in a write burst transaction
+    rand logic [7:0] AWLEN;  // Burst length
+    rand logic [2:0] AWSIZE;  // Burst size
+
+    // Write data channel
+    rand logic [DATA_WIDTH-1:0] WDATA;  // Write data
+
+    // Read address channel
+    rand logic [ADDR_WIDTH-1:0] ARADDR;  // The Initial Address of a read burst transaction
+    rand logic [7:0] ARLEN;  // Burst length
+    rand logic [2:0] ARSIZE;  // Burst size
+
+
+    // =============================
+    // ==== Outputs to Collect =====
+    // =============================
+
+    // Write address channel
+    logic AWREADY;  // Write address ready. Indicates that the slave is ready to accept an address
+
+    // Write data channel
+    logic WREADY;  // Indicates that the slave can accept the write data
+
+    // Write response channel
+    logic [1:0] BRESP;  // Write response. Indicates the status of the write transaction
+    logic BVALID;  // Indicates that a valid write response is available
+
+    // Read address channel
+    logic ARREADY; // Read address ready. This signal indicates that the slave is ready to accept an address
+
+    // Read data channel
+    logic [DATA_WIDTH-1:0] RDATA;  // Read data
+    logic [1:0] RRESP;  // Read response. This signal indicates the status of the read transfer
+    logic RVALID;  // Read valid. This signal indicates that the required read data is available
+    logic RLAST;  // Read last. This signal indicates the last transfer in a read burst
+
 
 
     constraint  Write_Oper {           // the signals used in the WRITE operation
@@ -140,13 +187,13 @@ class AXI4_Pack_Gen;
         Read_Oper_cg  = new();
     endfunction
 
-    function pre_randomize();
+    function void pre_randomize();
         $display("-----------------------------------------");
         $display("--------HERE randomization starts--------");
         $display("-----------------------------------------");
     endfunction
 
-    function post_randomize();
+    function void post_randomize();
         $display("-----------------------------------------");
         $display("--------HERE randomization Ends----------");
         $display("-----------------------------------------");
@@ -154,3 +201,5 @@ class AXI4_Pack_Gen;
 
 
 endclass
+
+endpackage
