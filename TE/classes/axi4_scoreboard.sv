@@ -4,10 +4,10 @@ import axi4_packet_pkg::*;
 
 class AXI4_scoreboard;
 
-    mailbox #(axi4_packet) gen2syc_mbx; // generator
+    mailbox #(axi4_packet) gen2scb_mbx; // generator
     mailbox #(int)         scb2gen_mbx; // generator sync token
 
-    mailbox #(axi4_packet) mon2syc_mbx; // monitor (sampled data)
+    mailbox #(axi4_packet) mon2scb_mbx; // monitor (sampled data)
     mailbox #(int)         scb2mon_mbx; // monitor ack token
 
     typedef struct {
@@ -46,10 +46,10 @@ class AXI4_scoreboard;
         axi4_packet gen_txn, mon_txn;
 
         forever begin
-            gen2syc_mbx.get(gen_txn);
+            gen2scb_mbx.get(gen_txn);
             scb2gen_mbx.put(1);
 
-            mon2syc_mbx.get(mon_txn);
+            mon2scb_mbx.get(mon_txn);
             scb2mon_mbx.put(1);  // NOTE: assuming the monitor blocks on an ack like the
                                   // generator does. Remove this line (and the mailbox,
                                   // if unused elsewhere) if your monitor doesn't wait on it.
