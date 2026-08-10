@@ -1,8 +1,8 @@
-package AXI4_Scoreboard_pkg;
+package axi4_Scoreboard_pkg;
 
 import axi4_packet_pkg::*;
 
-class AXI4_scoreboard;
+class axi4_scoreboard;
 
     mailbox #(axi4_packet) gen2scb_mbx; // generator
     mailbox #(int)         scb2gen_mbx; // generator sync token
