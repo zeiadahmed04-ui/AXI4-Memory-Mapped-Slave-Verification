@@ -6,19 +6,19 @@ package axi4_generator_pkg;
 
     // ======== Mailboxes ========
 
-    mailbox #(axi4_packet) gen2drv_mbx;  // Stimulus to drive
-    mailbox #(int) drv2gen_mbx;  // Acknowledge
+    mailbox #(axi4_packet) gen2drv_mbx;  // Generator to Driver
+    mailbox #(int) drv2gen_mbx;  // Driver to Generator acknowledgement
 
-    mailbox #(axi4_packet) gen2scb_mbx;  // Stimulus to drive
-    mailbox #(int) scb2gen_mbx;  // Acknowledge
+    mailbox #(axi4_packet) gen2scb_mbx;  // Generator to Scoreboard
+    mailbox #(int) scb2gen_mbx;  // Scoreboard to Generator acknowledgement
 
 
-    int unsigned num_pkts = 200;  // Number of Stimulus Packets to send
+    const int unsigned num_pkts = 200;  // Number of Stimulus Packets to send
 
     task run_generator;
 
       axi4_packet tx_pkt;
-      int ACK;
+      int ack;
 
       repeat (num_pkts) begin
 
@@ -29,11 +29,11 @@ package axi4_generator_pkg;
 
         // == Send to Driver == 
         gen2drv_mbx.put(tx_pkt);
-        drv2gen_mbx.get(ACK);  // To Synchronize with Driver
+        drv2gen_mbx.get(ack);  // To Synchronize with Driver
 
         // == Send to Scoreboard
         gen2scb_mbx.put(tx_pkt);
-        scb2gen_mbx.get(ACK);  // To Synchronize with Scoreboard
+        scb2gen_mbx.get(ack);  // To Synchronize with Scoreboard
 
       end
 
