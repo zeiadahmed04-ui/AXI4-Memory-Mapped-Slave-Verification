@@ -31,15 +31,15 @@ class axi4_packet;
     // ==== Inputs to Randomize ====
     // =============================
 
-    rand logic ARESETn;  // Global reset signal
+    logic ARESETn;  // Global reset signal
 
     // Write address channel
-    rand logic [ADDR_WIDTH-1:0] AWADDR;  // The Address of first transfer in a write burst transaction
+    rand logic [ADDR_WIDTH-1:0] AWADDR;  // The Address of first transfer in a write burst trans
     rand logic [7:0] AWLEN;  // Burst length
     rand logic [2:0] AWSIZE;  // Burst size
 
     // Write data channel
-    rand logic [DATA_WIDTH-1:0] WDATA;  // Write data
+    rand logic [DATA_WIDTH-1:0] WDATA[];  // Write data
 
     // Read address channel
     rand logic [ADDR_WIDTH-1:0] ARADDR;  // The Initial Address of a read burst transaction
@@ -70,19 +70,33 @@ class axi4_packet;
     logic RVALID;  // Read valid. This signal indicates that the required read data is available
     logic RLAST;  // Read last. This signal indicates the last transfer in a read burst
 
+    // Holds each WDATA beat in turn purely so we can cover the Data_W values
+    logic [DATA_WIDTH-1:0] current_wdata;
+
+    constraint ADDr_W_R{  // new edit on the constraints needs handle to turn on or off
+        ARADDR == AWADDR;
+    }
+
+    constraint Write_DATA {
+    WDATA.size() == AWLEN + 1;
+    foreach (WDATA[i])
+        WDATA[i] dist { 32'hFFFF_FFFF:/20, 32'h0000_0000:/10, [32'h0000_0000:32'hFFFF_FFFF]:/70 };
+}
 
 
     constraint  Write_Oper {           // the signals used in the WRITE operation
 
     AWADDR dist { 16'hFFFF:/10 , 16'h000:/10, [16'h0000:16'hFFFF]:/80}; // addres randomize
     AWLEN  dist {8'h00:/ 10 , 8'hFF:/ 10, [8'h00:8'hFF]:/ 80 };
-    WDATA  dist {32'hFFFF_FFFF:/20 , 32'h0000_0000:/10, [32'h0000_0000:32'hFFFF_FFFF]:/70};
-   }
+    }
 
-    constraint  Read_Oper {           // the signals used in the READ operation
+    constraint  Read_ADDR {           // the signals used in the READ operation
 
     ARADDR dist { 16'hFFFF:/10 , 16'h000:/10, [16'h0000:16'hFFFF]:/80}; // addres randomize
-    ARLEN  dist {8'b0000_0000:/ 10 , 8'b1111_1111 :/ 10, [8'h00:8'hFF]:/80};
+    }
+
+    constraint ARlen {
+        ARLEN  dist {8'b0000_0000:/ 10 , 8'b1111_1111 :/ 10, [8'h00:8'hFF]:/80};
     }
 
     constraint Size_c {
@@ -115,7 +129,7 @@ class axi4_packet;
             illegal_bins others = default;
         }
 
-    Data_W: coverpoint WDATA {
+    Data_W: coverpoint current_wdata {
             bins all_zero = {32'h0000_0000};
             bins all_one  = {32'hFFFF_FFFF};
             bins pat_a    = {32'hAAAA_AAAA};
@@ -185,6 +199,7 @@ class axi4_packet;
     function new();
         Write_Oper_cg = new();
         Read_Oper_cg  = new();
+        WDATA = new[AWLEN];
     endfunction
 
     function void pre_randomize();
@@ -199,6 +214,16 @@ class axi4_packet;
         $display("-----------------------------------------");
     endfunction
 
+    function void sample_write_coverage();
+        foreach (WDATA[i]) begin
+            current_wdata = WDATA[i];
+            Write_Oper_cg.sample();
+        end
+    endfunction
+
+    function void sample_read_coverage();
+        Read_Oper_cg.sample();
+    endfunction
 
 endclass
 

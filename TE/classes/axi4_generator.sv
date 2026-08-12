@@ -22,12 +22,16 @@ package axi4_generator_pkg;
 
       repeat (num_pkts) begin
 
+
         tx_pkt = new();
+        tx_pkt.constraint_mode("ADDr_W_R",1);
+        tx_pkt.constraint_mode("Read_ADDR",0);
+
 
         assert (tx_pkt.randomize())
         else $error("!!Randomization Failed!!");
 
-        // == Send to Driver == 
+        // == Send to Driver ==
         gen2drv_mbx.put(tx_pkt);
         drv2gen_mbx.get(ack);  // To Synchronize with Driver
 
@@ -38,9 +42,35 @@ package axi4_generator_pkg;
       end
 
       $display("\n============================\n");
-      $display("==## Generator Finished ##==");
+      $display("==## Generator Finished test 1 ##==");
       $display("Time:%0t, Packets_Sent:%0d", $time, num_pkts);
       $display("\n============================\n");
+
+    // **********************  new section *************************//
+
+      repeat (num_pkts) begin
+
+        tx_pkt = new();
+        tx_pkt.constraint_mode("ADDr_W_R",0);
+        tx_pkt.constraint_mode("Read_ADDR",1);
+        assert (tx_pkt.randomize())
+        else $error("!!Randomization Failed!!");
+
+        // == Send to Driver ==
+        gen2drv_mbx.put(tx_pkt);
+        drv2gen_mbx.get(ack);  // To Synchronize with Driver
+
+        // == Send to Scoreboard
+        gen2scb_mbx.put(tx_pkt);
+        scb2gen_mbx.get(ack);  // To Synchronize with Scoreboard
+
+      end
+
+      $display("\n===================================\n");
+      $display("==## Generator Finished test num 2 ##==");
+      $display("Time:%0t, Packets_Sent:%0d", $time, num_pkts);
+      $display("\n===================================\n");
+
 
     endtask
 
