@@ -16,7 +16,7 @@ package axi4_env_pkg;
     axi4_scoreboard scb;
 
     // ======== Interface ======== 
-    virtual axi4_intrf.TB vif;
+    virtual axi4_intrf vif;
 
 
     // ======== Mailboxes ========

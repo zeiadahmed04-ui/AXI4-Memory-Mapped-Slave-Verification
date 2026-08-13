@@ -24,8 +24,8 @@ package axi4_generator_pkg;
 
 
         tx_pkt = new();
-        tx_pkt.constraint_mode("ADDr_W_R",1);
-        tx_pkt.constraint_mode("Read_ADDR",0);
+        tx_pkt.ADDr_W_R.constraint_mode(1);
+        tx_pkt.Read_ADDR.constraint_mode(0);
 
 
         assert (tx_pkt.randomize())
@@ -46,13 +46,14 @@ package axi4_generator_pkg;
       $display("Time:%0t, Packets_Sent:%0d", $time, num_pkts);
       $display("\n============================\n");
 
-    // **********************  new section *************************//
+      // **********************  new section *************************//
 
       repeat (num_pkts) begin
 
         tx_pkt = new();
-        tx_pkt.constraint_mode("ADDr_W_R",0);
-        tx_pkt.constraint_mode("Read_ADDR",1);
+        tx_pkt.ADDr_W_R.constraint_mode(0);
+        tx_pkt.Read_ADDR.constraint_mode(1);
+
         assert (tx_pkt.randomize())
         else $error("!!Randomization Failed!!");
 

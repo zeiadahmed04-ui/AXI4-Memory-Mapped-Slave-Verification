@@ -10,6 +10,10 @@ class axi4_scoreboard;
     localparam MEM_DEPTH = 1024;
     logic [31:0] ref_mem [0:MEM_DEPTH-1];
 
+
+    mailbox #(axi4_packet) gen2scb_mbx;  // Generator to Scoreboard
+    mailbox #(int) scb2gen_mbx;  // Scoreboard to Generator acknowledgement
+
     mailbox #(axi4_packet) mon2scb_mbx; // from monitor
     mailbox #(int)         scb2mon_mbx; // ack back to monitor
 
@@ -26,8 +30,12 @@ class axi4_scoreboard;
     task run_scoreboard();
 
         axi4_packet pkt;
+        axi4_packet pkt_gen;
 
         forever begin
+            
+            gen2scb_mbx.get(pkt_gen);
+            scb2gen_mbx.put(1);
 
             mon2scb_mbx.get(pkt);
 
