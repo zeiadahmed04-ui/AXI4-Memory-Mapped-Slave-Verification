@@ -31,8 +31,6 @@ class axi4_packet;
     // ==== Inputs to Randomize ====
     // =============================
 
-    logic ARESETn;  // Global reset signal
-
     // Write address channel
     rand logic [ADDR_WIDTH-1:0] AWADDR;  // The Address of first transfer in a write burst trans
     rand logic [7:0] AWLEN;  // Burst length
@@ -199,20 +197,20 @@ class axi4_packet;
     function new();
         Write_Oper_cg = new();
         Read_Oper_cg  = new();
-        WDATA = new[AWLEN];
+        //WDATA = new[AWLEN];
     endfunction
 
-    function void pre_randomize();
-        $display("-----------------------------------------");
-        $display("--------HERE randomization starts--------");
-        $display("-----------------------------------------");
-    endfunction
+    // function void pre_randomize();
+    //     $display("-----------------------------------------");
+    //     $display("--------HERE randomization starts--------");
+    //     $display("-----------------------------------------");
+    // endfunction
 
-    function void post_randomize();
-        $display("-----------------------------------------");
-        $display("--------HERE randomization Ends----------");
-        $display("-----------------------------------------");
-    endfunction
+    // function void post_randomize();
+    //     $display("-----------------------------------------");
+    //     $display("--------HERE randomization Ends----------");
+    //     $display("-----------------------------------------");
+    // endfunction
 
     function void sample_write_coverage();
         foreach (WDATA[i]) begin
