@@ -7,15 +7,15 @@ vlib work
 # =============================================
 # =============== Compile Files ===============
 # =============================================
-vlog -f files.txt
+vlog -f ./sim/files.txt
 
 # =============================================
 # =========== Simulate with Coverage ==========
 # =============================================
 
-vsim -voptargs=+acc work.axi4_tb
+vsim -voptargs=+acc work.axi4_tb -cover
 
-coverage save cov.ucdb -onexit -du work.axi4_memory_fixed
+coverage save cov.ucdb -onexit -du work.axi4_fixed
 
 # =============================================
 # ============= Add Waves and Run =============
@@ -27,4 +27,4 @@ run -all
 # =============================================
 # ============== Coverage Report ==============
 # =============================================
-coverage report -details -output ./reports/cov_report.txt
+coverage report -details -du=work.axi4_fixed -output ./reports/cov_report.txt

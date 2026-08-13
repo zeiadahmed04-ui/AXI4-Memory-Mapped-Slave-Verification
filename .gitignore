@@ -74,7 +74,7 @@ wlft*
 covhtmlreport/
 
 # Project and configuration files 
-# *.mpf
+*.mpf
 
 # Temporary or debug files
 *.mti
