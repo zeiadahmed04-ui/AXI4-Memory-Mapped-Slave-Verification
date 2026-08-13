@@ -53,3 +53,29 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# QuestaSim / ModelSim
+
+# Default compiled library directory
+work/
+
+# Default log file
+transcript
+*.log
+
+# Waveform files
+*.wlf
+wlft*
+*.vcd
+*.vstf
+
+# Unified Coverage Database
+*.ucdb
+covhtmlreport/
+
+# Project and configuration files 
+# *.mpf
+
+# Temporary or debug files
+*.mti
+*.dbg
